@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 
 public class SimpleGUI extends JFrame {
-
+	//second commit
 	private JPanel contentPane;
 	private JTextField txtPlaatsen;
 	private JTextField txtVerdiepingen;
