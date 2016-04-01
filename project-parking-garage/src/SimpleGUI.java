@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 
 public class SimpleGUI extends JFrame {
 	//second commit
+	//third commit
 	private JPanel contentPane;
 	private JTextField txtPlaatsen;
 	private JTextField txtVerdiepingen;
