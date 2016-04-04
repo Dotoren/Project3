@@ -11,16 +11,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
+import java.awt.TextField;
+import javax.swing.JTextPane;
+import java.awt.Label;
 
-public class SimpleGUI extends JFrame {
-	//second commit 
-	//forth commit
+public class GUI extends JFrame {
 	
 	private JPanel contentPane;
 	private JTextField txtPlaatsen;
 	private JTextField txtVerdiepingen;
 	private JTextField txtRijen;
-	private JLabel lblError;
+	private JLabel lblRijen;
+	private JLabel lblPlaatsen;
+	private JLabel Verdiepingen;
 
 	/**
 	 * Launch the application.
@@ -29,7 +32,7 @@ public class SimpleGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SimpleGUI frame = new SimpleGUI();
+					GUI frame = new GUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -41,9 +44,9 @@ public class SimpleGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SimpleGUI() {
+	public GUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 714, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -52,22 +55,28 @@ public class SimpleGUI extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.WEST);
 		
-		lblError = new JLabel("");
-		panel.add(lblError);
+		Verdiepingen = new JLabel("Verdiepingen");
+		panel.add(Verdiepingen);
 		
 		txtRijen = new JTextField();
 		panel.add(txtRijen);
 		txtRijen.setColumns(10);
 		
+		lblRijen = new JLabel("Rijen");
+		panel.add(lblRijen);
+		
 		txtVerdiepingen = new JTextField();
 		panel.add(txtVerdiepingen);
 		txtVerdiepingen.setColumns(10);
+		
+		lblPlaatsen = new JLabel("Plaatsen");
+		panel.add(lblPlaatsen);
 		
 		txtPlaatsen = new JTextField();
 		panel.add(txtPlaatsen);
 		txtPlaatsen.setColumns(10);
 		
-		JButton btnKnopje = new JButton("Klik");
+		JButton btnKnopje = new JButton("Simulate");
 		btnKnopje.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -92,7 +101,7 @@ public class SimpleGUI extends JFrame {
 				}
 				catch(NumberFormatException ex)
 				{
-					lblError.setText("Tekst kon niet worden omgezet naar een getal");
+					lblError.setText("Make sure to use integers only");
 					Color rood = new Color(232, 29, 78);
 					txtVerdiepingen.setBackground(rood);
 					txtRijen.setBackground(rood);
