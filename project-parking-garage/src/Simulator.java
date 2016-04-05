@@ -20,13 +20,12 @@ public class Simulator {
     int paymentSpeed = 10; // number of cars that can pay per minute
     int exitSpeed = 9; // number of cars that can leave per minute
 
-    public Simulator(int verdiepingenGetal, int rijenGetal, int plaatsenGetal) {
+    public Simulator() {
         entranceCarQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        simulatorView = new SimulatorView(verdiepingenGetal, rijenGetal, plaatsenGetal);
+        simulatorView = new SimulatorView(3, 6, 30);
     }
-
 
     public void run() {
         for (int i = 0; i < 10000; i++) {
