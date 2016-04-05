@@ -24,8 +24,9 @@ public class Simulator {
         entranceCarQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        simulatorView = new SimulatorView(3, 6, 30);
+        simulatorView = new SimulatorView(verdiepingenGetal, rijenGetal, plaatsenGetal);
     }
+
 
     public void run() {
         for (int i = 0; i < 10000; i++) {
