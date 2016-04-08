@@ -1,5 +1,18 @@
+package Garage.view;
+
+import Garage.logic.*;
+import Garage.main.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Objects;
+import java.util.Random;
 
 public class SimulatorView extends JFrame {
     private CarParkView carParkView;
@@ -7,17 +20,30 @@ public class SimulatorView extends JFrame {
     private int numberOfRows;
     private int numberOfPlaces;
     private Car[][][] cars;
+    private Simulator simulator;
+    
+    private JButton btnStart;
+    private JButton btnStepOnce;
+    private JButton btnStepHundred;
+    private JPanel westPanel;
+    private Container contentPane;
+    private GridLayout westLayout;
 
-    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
+    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
         this.numberOfFloors = numberOfFloors;
         this.numberOfRows = numberOfRows;
         this.numberOfPlaces = numberOfPlaces;
+        this.simulator = simulator;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         
         carParkView = new CarParkView();
-
-        Container contentPane = getContentPane();
+        
+        contentPane = getContentPane();
+        createView(); //Own UI Stuff
+       
         //contentPane.add(stepLabel, BorderLayout.NORTH);
+        
+        contentPane.add(westPanel, BorderLayout.WEST);
         contentPane.add(carParkView, BorderLayout.CENTER);
         //contentPane.add(population, BorderLayout.SOUTH);
         pack();
@@ -25,7 +51,71 @@ public class SimulatorView extends JFrame {
 
         updateView();
     }
+    
+    public class StartEvent implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			
+			Thread queryThread = new Thread(); {
+				simulator.start();
+            }
+		}
+    }
+    
+    public class StepOnceEvent implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			
+			simulator.tick();
+		}
+    }
+    
+    public class StepHundredEvent implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			
+			Thread queryThread = new Thread(); {
+				simulator.tickHundred();
+			}
+		}
+    }
+    
+    public void createView()
+    {
+    	westPanel = new JPanel();
+    	westPanel.setVisible(true);
 
+    	getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+
+    	JPanel panel1 = new JPanel();
+    	JPanel panel2= new JPanel();
+    	JPanel panel3= new JPanel();
+    	
+    	StartEvent startEvent = new StartEvent();
+    	StepOnceEvent stepOnceEvent = new StepOnceEvent();
+    	StepHundredEvent stepHundredEvent = new StepHundredEvent();
+    	
+    	btnStart = new JButton();
+    	btnStart.setText("Start");
+    	btnStart.setPreferredSize(new Dimension(125, 30));
+    	btnStart.addActionListener(startEvent);
+    	
+    	btnStepOnce = new JButton();
+    	btnStepOnce.setText("Step once");
+    	btnStepOnce.setPreferredSize(new Dimension(125, 30));
+    	btnStepOnce.addActionListener(stepOnceEvent);
+    	
+    	btnStepHundred = new JButton();
+    	btnStepHundred.setText("Step hundred");
+    	btnStepHundred.setPreferredSize(new Dimension(125, 30));
+    	btnStepOnce.addActionListener(stepHundredEvent);
+    	
+    	panel1.add(btnStart);
+    	panel2.add(btnStepOnce);
+    	panel3.add(btnStepHundred);
+    	
+    	westPanel.add(panel1);
+    	westPanel.add(panel2);
+    	westPanel.add(panel3);
+    }
+    
     public void updateView() {
         carParkView.updateView();
     }
@@ -178,7 +268,27 @@ public class SimulatorView extends JFrame {
                     for(int place = 0; place < getNumberOfPlaces(); place++) {
                         Location location = new Location(floor, row, place);
                         Car car = getCarAt(location);
-                        Color color = car == null ? Color.white : Color.red;
+                        
+                        //Color color = car == null ? Color.white : car.getIsReserved() == true ? Color.orange : car.getIsPass() == true ? Color.green : Color.red;
+
+                        Color color = Color.white;
+                        
+                        if(car != null)
+                        {
+                            if(car.getIsPass())
+                            {
+                            	color = color.green;
+                            }
+                            else if(car.getIsReserved())
+                            {
+                            	color = color.orange;
+                            }
+                            else
+                            {
+                            	color = color.red;
+                            }
+                        }
+                        
                         drawPlace(graphics, location, color);
                     }
                 }

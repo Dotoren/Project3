@@ -1,3 +1,4 @@
+package Garage.logic;
 
 public class Location {
 
