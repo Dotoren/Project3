@@ -24,6 +24,7 @@ public class Simulator {
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
+    private Thread draad;
 
     private int day = 0;
     private int hour = 0;
@@ -54,28 +55,38 @@ public class Simulator {
 
     public void start() {
     	
-    	new Thread() {
+    	draad = new Thread() {
     		
     		public void run() {
     			for (int i = 0; i < 1000; i++) {
     	            tick();
     	        }
     		}
-    	}.start();
+    	};
+    	draad.start();
     }
     
     
     public void tickHundred() {
     	
-    	new Thread() {
+    	draad = new Thread() {
         		
     		public void run() {
         		for (int i = 0; i < 101; i++) {
         			tick();
         	    }
         	}
-    	}.start();
+    	};
+    	draad.start();
     }
+    
+    public void pause() {
+    	
+    	draad.stop();
+    }
+
+
+    
     
     
     public void tick() {

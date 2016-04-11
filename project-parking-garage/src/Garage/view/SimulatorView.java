@@ -25,6 +25,7 @@ public class SimulatorView extends JFrame {
     private JButton btnStart;
     private JButton btnStepOnce;
     private JButton btnStepHundred;
+    private JButton btnPause;
     private JPanel westPanel;
     private Container contentPane;
     private GridLayout westLayout;
@@ -42,7 +43,6 @@ public class SimulatorView extends JFrame {
         createView(); //Own UI Stuff
        
         //contentPane.add(stepLabel, BorderLayout.NORTH);
-        
         contentPane.add(westPanel, BorderLayout.WEST);
         contentPane.add(carParkView, BorderLayout.CENTER);
         //contentPane.add(population, BorderLayout.SOUTH);
@@ -77,6 +77,13 @@ public class SimulatorView extends JFrame {
 		}
     }
     
+    public class PauseEvent implements ActionListener {
+    	public void actionPerformed(ActionEvent e) {
+    		
+    		simulator.pause();
+    	}
+    }
+    
     public void createView()
     {
     	westPanel = new JPanel();
@@ -85,12 +92,14 @@ public class SimulatorView extends JFrame {
     	getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
     	JPanel panel1 = new JPanel();
-    	JPanel panel2= new JPanel();
-    	JPanel panel3= new JPanel();
+    	JPanel panel2 = new JPanel();
+    	JPanel panel3 = new JPanel();
+    	JPanel panel4 = new JPanel();
     	
     	StartEvent startEvent = new StartEvent();
     	StepOnceEvent stepOnceEvent = new StepOnceEvent();
     	StepHundredEvent stepHundredEvent = new StepHundredEvent();
+    	PauseEvent pauseEvent = new PauseEvent();
     	
     	btnStart = new JButton();
     	btnStart.setText("Start");
@@ -105,15 +114,22 @@ public class SimulatorView extends JFrame {
     	btnStepHundred = new JButton();
     	btnStepHundred.setText("Step hundred");
     	btnStepHundred.setPreferredSize(new Dimension(125, 30));
-    	btnStepOnce.addActionListener(stepHundredEvent);
+    	btnStepHundred.addActionListener(stepHundredEvent);
+    	
+    	btnPause = new JButton();
+    	btnPause.setText("Pause");
+    	btnPause.setPreferredSize(new Dimension(125, 30));
+    	btnPause.addActionListener(pauseEvent);
     	
     	panel1.add(btnStart);
     	panel2.add(btnStepOnce);
     	panel3.add(btnStepHundred);
+    	panel4.add(btnPause);
     	
     	westPanel.add(panel1);
     	westPanel.add(panel2);
     	westPanel.add(panel3);
+    	westPanel.add(panel4);
     }
     
     public void updateView() {
