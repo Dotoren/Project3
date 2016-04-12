@@ -32,10 +32,11 @@ public class Simulator {
     public int enterSpeed;
     public int exitSpeed;
     public int paymentSpeed;
-    public int averageNumberOfCarsPerHour;
+    public int averagetotalNumberOfCarsPerHour;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
+    private int totalNumberOfCars;
 
     private int totalTicketCars;
     private int totalParkPassCars;
@@ -72,8 +73,8 @@ public class Simulator {
         this.isExtraLeaving = isExtraLeaving;
     }
     
-    public int getTotalTicketCars() {
-        return totalTicketCars;
+    public int getTotalNumberOfCars() {
+        return totalNumberOfCars;
     }
 
     public int getTotalParkPassCars() {
@@ -95,13 +96,16 @@ public class Simulator {
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 6, 30, this);
+        totalNumberOfCars = 0;
     }
     
     public Simulator(int floors, int rows, int places) {
         entranceCarQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
+        totalNumberOfCars = 0;
         simulatorView = new SimulatorView(floors, rows, places, this);
+
     }
 
     public void start() {
@@ -131,7 +135,8 @@ public class Simulator {
     	draad.start();
     }
     
-    public void pause() {
+    @SuppressWarnings("deprecation")
+	public void pause() {
     	
     	draad.stop();
     }
@@ -196,40 +201,40 @@ public class Simulator {
         int paymentSpeed1 = 10;
         
         if (getIsSunday()){
-        	averageNumberOfCarsPerHour = 50;
+        	averagetotalNumberOfCarsPerHour = 50;
         	exitSpeed = exitSpeed1;
         	enterSpeed = enterSpeed1;
         	paymentSpeed = paymentSpeed1;
         }
         
         if (getIsWeekDay()){
-        	averageNumberOfCarsPerHour = 75;
+        	averagetotalNumberOfCarsPerHour = 75;
         	exitSpeed = exitSpeed1;
         	enterSpeed = enterSpeed2;
         	paymentSpeed = paymentSpeed1;
         }
         
         if (getIsWeekend()){
-        	averageNumberOfCarsPerHour = 100;
+        	averagetotalNumberOfCarsPerHour = 100;
         	exitSpeed = exitSpeed1;
         	enterSpeed = enterSpeed3;
         	paymentSpeed = paymentSpeed1;
         }
         
         if (getIsExtraLeaving()){
-        	averageNumberOfCarsPerHour = 50;
+        	averagetotalNumberOfCarsPerHour = 50;
         	exitSpeed = exitSpeed2;
         	enterSpeed = enterSpeed1;
         	paymentSpeed = paymentSpeed1;
         }
 
         // Calculate the number of cars that arrive this minute.
-        double standardDeviation = averageNumberOfCarsPerHour * 0.1;
-        double numberOfCarsPerHour = averageNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
-        int numberOfCarsPerMinute = (int)Math.round(numberOfCarsPerHour / 60);
+        double standardDeviation = averagetotalNumberOfCarsPerHour * 0.1;
+        double totalNumberOfCarsPerHour = averagetotalNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
+        int totalNumberOfCarsPerMinute = (int)Math.round(totalNumberOfCarsPerHour / 60);
 
         // Add the cars to the back of the queue.
-        for (int i = 0; i < numberOfCarsPerMinute; i++) {
+        for (int i = 0; i < totalNumberOfCarsPerMinute; i++) {
             Car car = new AdHocCar();
             car.setIsPass(Math.random() < 0.2);
             if (!car.getIsPass()){
@@ -269,6 +274,7 @@ public class Simulator {
                     car.setMinutesLeft(stayMinutes);
                 }
             }
+            totalNumberOfCars++;
         }
 
         // Perform car park tick.
@@ -285,6 +291,7 @@ public class Simulator {
 	        	}
 	        		else{
 	                    simulatorView.removeCarAt(car.getLocation());
+	                    totalNumberOfCars--;
 	        			exitCarQueue.addCar(car);
 	        		}
         }
@@ -297,6 +304,7 @@ public class Simulator {
             }
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
+            totalNumberOfCars--;
             exitCarQueue.addCar(car);
         }
 

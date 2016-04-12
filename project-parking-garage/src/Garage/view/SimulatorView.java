@@ -136,18 +136,22 @@ public class SimulatorView extends JFrame {
     	northPanel.add(panel4);
     }
     
+    
     public void southView() {    	
     	
         southPanel = new JPanel();
         getContentPane().add(southPanel);
         
-        Label1 = new JLabel("Data");
+        Label1 = new JLabel();
         southPanel.add(Label1);
     }
     
+    
     public void updateView() {
         carParkView.updateView();
+        Label1.setText("Total number of cars:   " + simulator.getTotalNumberOfCars());
     }
+    
     
      public int getNumberOfFloors() {
             return numberOfFloors;
