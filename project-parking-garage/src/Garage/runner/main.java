@@ -1,6 +1,7 @@
 package Garage.runner;
 
 import Garage.main.*;
+import Garage.logic.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -19,6 +20,6 @@ public class main {
 		// if the params are empty, it will be set to default (3,6,30)
 		
 		Simulator simulator = new Simulator(3, 6, 30);
-		//simulator.run();
+		
 	}
 }

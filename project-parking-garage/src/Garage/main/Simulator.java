@@ -25,19 +25,70 @@ public class Simulator {
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
     private Thread draad;
+    private boolean isWeekend;
+    private boolean isSunday;
+    private boolean isWeekDay;
+    private boolean isExtraLeaving;
+    public int enterSpeed;
+    public int exitSpeed;
+    public int paymentSpeed;
+    public int averageNumberOfCarsPerHour;
+    private int numberOfFloors;
+    private int numberOfRows;
+    private int numberOfPlaces;
 
+    private int totalTicketCars;
+    private int totalParkPassCars;
+    private int totalReservationCars;
+    
+    public boolean getIsWeekend() {
+        return isWeekend;
+    }
+
+    public void setIsWeekend(boolean isWeekend) {
+        this.isWeekend = isWeekend;
+    }
+    public boolean getIsSunday() {
+        return isSunday;
+    }
+
+    public void setIsSunday(boolean isSunday) {
+        this.isSunday = isSunday;
+    }
+    
+    public boolean getIsWeekDay() {
+        return isWeekDay;
+    }
+
+    public void setIsWeekDay(boolean isWeekDay) {
+        this.isWeekDay = isWeekDay;
+    }
+    
+    public boolean getIsExtraLeaving() {
+        return isExtraLeaving;
+    }
+
+    public void setIsExtraLeaving(boolean isExtraLeaving) {
+        this.isExtraLeaving = isExtraLeaving;
+    }
+    
+    public int getTotalTicketCars() {
+        return totalTicketCars;
+    }
+
+    public int getTotalParkPassCars() {
+        return totalParkPassCars;
+    }
+
+    public int getTotalReservationCars() {
+        return totalReservationCars;
+    }
+    
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
 
     private int tickPause = 100;
-
-    int weekDayArrivals= 50; // average number of arriving cars per hour
-    int weekendArrivals = 90; // average number of arriving cars per hour
-
-    int enterSpeed = 3; // number of cars that can enter per minute
-    int paymentSpeed = 10; // number of cars that can pay per minute
-    int exitSpeed = 9; // number of cars that can leave per minute
 
     public Simulator() {
         entranceCarQueue = new CarQueue();
@@ -106,11 +157,71 @@ public class Simulator {
  
 
         Random random = new Random();
+        
+        // methods for returning the value of cars in the simulation
+        
+
 
         // Get the average number of cars that arrive per hour.
-        int averageNumberOfCarsPerHour = day < 5
-                ? weekDayArrivals
-                : weekendArrivals;
+        if (day == 7){
+        	setIsSunday(true);
+        	setIsWeekend(false);
+        	setIsWeekDay(false);
+        	setIsExtraLeaving(false);
+        }
+        else if (day == 4-6 && hour == 19-24){
+        	setIsSunday(false);
+        	setIsWeekend(true);
+        	setIsWeekDay(false);
+        	setIsExtraLeaving(false);
+        }
+        else if (day == 5-7 && hour == 0-1){
+        	setIsSunday(false);
+        	setIsWeekend(false);
+        	setIsWeekDay(false);
+        	setIsExtraLeaving(true);
+        }
+        else {
+        	setIsSunday(false);
+        	setIsWeekend(false);
+        	setIsWeekDay(true);
+        	setIsExtraLeaving(false);
+        }
+        
+        int enterSpeed1 = 2;
+        int enterSpeed2 = 3;
+        int enterSpeed3 = 5;
+        int exitSpeed1 = 10;
+        int exitSpeed2 = 15;
+        int paymentSpeed1 = 10;
+        
+        if (getIsSunday()){
+        	averageNumberOfCarsPerHour = 50;
+        	exitSpeed = exitSpeed1;
+        	enterSpeed = enterSpeed1;
+        	paymentSpeed = paymentSpeed1;
+        }
+        
+        if (getIsWeekDay()){
+        	averageNumberOfCarsPerHour = 75;
+        	exitSpeed = exitSpeed1;
+        	enterSpeed = enterSpeed2;
+        	paymentSpeed = paymentSpeed1;
+        }
+        
+        if (getIsWeekend()){
+        	averageNumberOfCarsPerHour = 100;
+        	exitSpeed = exitSpeed1;
+        	enterSpeed = enterSpeed3;
+        	paymentSpeed = paymentSpeed1;
+        }
+        
+        if (getIsExtraLeaving()){
+        	averageNumberOfCarsPerHour = 50;
+        	exitSpeed = exitSpeed2;
+        	enterSpeed = enterSpeed1;
+        	paymentSpeed = paymentSpeed1;
+        }
 
         // Calculate the number of cars that arrive this minute.
         double standardDeviation = averageNumberOfCarsPerHour * 0.1;
@@ -120,9 +231,9 @@ public class Simulator {
         // Add the cars to the back of the queue.
         for (int i = 0; i < numberOfCarsPerMinute; i++) {
             Car car = new AdHocCar();
-            car.setIsPass(Math.random() < 0.3);
+            car.setIsPass(Math.random() < 0.2);
             if (!car.getIsPass()){
-            	car.setIsReserved(Math.random() <0.2);
+            	car.setIsReserved(Math.random() <0.3);
             }
             if (car.getIsReserved() || car.getIsPass()){
             	car.setIsPaying(false);
@@ -133,19 +244,30 @@ public class Simulator {
             entranceCarQueue.addCar(car);
             break;
         }
-
+                
         // Remove car from the front of the queue and assign to a parking space.
         for (int i = 0; i < enterSpeed; i++) {
             Car car = entranceCarQueue.removeCar();
             if (car == null) {
                 break;
             }
+            
             // Find a space for this car.
-            Location freeLocation = simulatorView.getFirstFreeLocation();
-            if (freeLocation != null) {
-                simulatorView.setCarAt(freeLocation, car);
-                int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
-                car.setMinutesLeft(stayMinutes);
+            if (car.getIsReserved() == true){
+            	Location freeReservedLocation = simulatorView.getReservedFreeLocation();
+                if (freeReservedLocation != null) {
+                    simulatorView.setCarAt(freeReservedLocation, car);
+                    int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
+                    car.setMinutesLeft(stayMinutes);
+                }
+            }
+            else {
+            	Location freeLocation = simulatorView.getRandomFreeLocation();
+                if (freeLocation != null) {
+                    simulatorView.setCarAt(freeLocation, car);
+                    int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
+                    car.setMinutesLeft(stayMinutes);
+                }
             }
         }
 
@@ -198,4 +320,3 @@ public class Simulator {
         }
     }
 }
-

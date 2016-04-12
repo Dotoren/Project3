@@ -26,10 +26,13 @@ public class SimulatorView extends JFrame {
     private JButton btnStepOnce;
     private JButton btnStepHundred;
     private JButton btnPause;
-    private JPanel westPanel;
+    private JPanel northPanel;
     private Container contentPane;
-    private GridLayout westLayout;
-
+    private GridLayout northLayout;
+    private JPanel southPanel;
+    private JLabel Label1;
+    
+    
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
         this.numberOfFloors = numberOfFloors;
         this.numberOfRows = numberOfRows;
@@ -40,12 +43,13 @@ public class SimulatorView extends JFrame {
         carParkView = new CarParkView();
         
         contentPane = getContentPane();
-        createView(); //Own UI Stuff
-       
-        //contentPane.add(stepLabel, BorderLayout.NORTH);
-        contentPane.add(westPanel, BorderLayout.WEST);
+        northView(); // Display the northView (buttons)
+        southView(); // Display the southView (data)
+      
+        contentPane.add(northPanel, BorderLayout.NORTH);
         contentPane.add(carParkView, BorderLayout.CENTER);
-        //contentPane.add(population, BorderLayout.SOUTH);
+        contentPane.add(southPanel, BorderLayout.SOUTH);
+        
         pack();
         setVisible(true);
 
@@ -84,10 +88,10 @@ public class SimulatorView extends JFrame {
     	}
     }
     
-    public void createView()
+    public void northView()
     {
-    	westPanel = new JPanel();
-    	westPanel.setVisible(true);
+    	northPanel = new JPanel();
+    	northPanel.setVisible(true);
 
     	getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
@@ -126,10 +130,19 @@ public class SimulatorView extends JFrame {
     	panel3.add(btnStepHundred);
     	panel4.add(btnPause);
     	
-    	westPanel.add(panel1);
-    	westPanel.add(panel2);
-    	westPanel.add(panel3);
-    	westPanel.add(panel4);
+    	northPanel.add(panel1);
+    	northPanel.add(panel2);
+    	northPanel.add(panel3);
+    	northPanel.add(panel4);
+    }
+    
+    public void southView() {    	
+    	
+        southPanel = new JPanel();
+        getContentPane().add(southPanel);
+        
+        Label1 = new JLabel("Data");
+        southPanel.add(Label1);
     }
     
     public void updateView() {
@@ -181,13 +194,13 @@ public class SimulatorView extends JFrame {
             return car;
         }
     
-        public Location getFirstFreeLocation() {
+        public Location getRandomFreeLocation() {
         	Random randomGenerator = new Random();
         	int randomFloor = randomGenerator.nextInt(getNumberOfFloors());
         	int randomRow = randomGenerator.nextInt(getNumberOfRows());
         	int randomPlace = randomGenerator.nextInt(getNumberOfPlaces());
             for (int floor = randomFloor; floor < getNumberOfFloors(); floor++) {
-                for (int row = randomRow; row < getNumberOfRows(); row++) {
+                for (int row = randomRow; row < getNumberOfRows() - 1; row++) {
                     for (int place = randomPlace; place < getNumberOfPlaces(); place++) {
                         Location location = new Location(floor, row, place);
                         if (getCarAt(location) == null) {
@@ -197,6 +210,23 @@ public class SimulatorView extends JFrame {
                 }
             }
             return null;
+        }
+        
+        public Location getReservedFreeLocation() {
+        	Random randomGenerator = new Random();
+        	int randomFloor = randomGenerator.nextInt(getNumberOfFloors());
+        	int randomPlace = randomGenerator.nextInt(getNumberOfPlaces());
+        	for (int floor = randomFloor; floor < getNumberOfFloors(); floor++) {
+        		for (int row = getNumberOfRows() - 1; row<getNumberOfRows(); row++) {
+        			for (int place = randomPlace; place < getNumberOfPlaces(); place++) {
+        				Location location = new Location(floor, row, place);
+        				if (getCarAt(location) == null){
+        					return location;
+        				}
+        			}
+        		}
+        	}
+        	return null;
         }
     
         public Car getFirstLeavingCar() {
@@ -241,7 +271,16 @@ public class SimulatorView extends JFrame {
     private class CarParkView extends JPanel {
         
         private Dimension size;
-        private Image carParkImage;    
+        private Image carParkImage; 
+        private boolean isBlack;
+        
+        public boolean getIsBlack() {
+            return isBlack;
+        }
+
+        public void setIsBlack(boolean isBlack) {
+            this.isBlack = isBlack;
+        }
     
         /**
          * Constructor for objects of class CarPark
@@ -291,7 +330,14 @@ public class SimulatorView extends JFrame {
                         
                         //Color color = car == null ? Color.white : car.getIsReserved() == true ? Color.orange : car.getIsPass() == true ? Color.green : Color.red;
 
-                        Color color = Color.white;
+                        if (row == getNumberOfRows()-1){
+                        	setIsBlack(true);
+                        }
+                        else{
+                        	setIsBlack(false);
+                        }
+                        	
+                        Color color = getIsBlack() == true ? Color.black : Color.white;
                         
                         if(car != null)
                         {
@@ -303,7 +349,7 @@ public class SimulatorView extends JFrame {
                             {
                             	color = color.orange;
                             }
-                            else
+                            else if (car.getIsPaying())
                             {
                             	color = color.red;
                             }
