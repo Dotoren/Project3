@@ -161,8 +161,8 @@ public class SimulatorView extends JFrame {
     public void updateView() {
         carParkView.updateView();
         Label1.setText("Total amount of cars:   " + simulator.getTotalNumberOfCars());
-   //   Label2.setText("Amount of PassHolders:   " + simulator.);
-   //   Label3.setText("Amount of Reservations:   " + simulator.);
+        Label2.setText("Amount of PassHolders:   " + simulator.getTotalParkPassCars());
+        Label3.setText("Amount of Reservations:   " + simulator.getTotalReservationCars());
     }
     
     

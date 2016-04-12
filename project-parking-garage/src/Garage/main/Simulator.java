@@ -38,7 +38,6 @@ public class Simulator {
     private int numberOfPlaces;
     private int totalNumberOfCars;
 
-    private int totalTicketCars;
     private int totalParkPassCars;
     private int totalReservationCars;
     
@@ -264,6 +263,7 @@ public class Simulator {
                     simulatorView.setCarAt(freeReservedLocation, car);
                     int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
                     car.setMinutesLeft(stayMinutes);
+                    totalReservationCars++;
                 }
             }
             else {
@@ -272,6 +272,9 @@ public class Simulator {
                     simulatorView.setCarAt(freeLocation, car);
                     int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
                     car.setMinutesLeft(stayMinutes);
+                    if (car.getIsPass() == true){
+                    	totalParkPassCars++;
+                    }
                 }
             }
             totalNumberOfCars++;
@@ -293,6 +296,13 @@ public class Simulator {
 	                    simulatorView.removeCarAt(car.getLocation());
 	                    totalNumberOfCars--;
 	        			exitCarQueue.addCar(car);
+	        			if (car.getIsReserved() == true) {
+	        				totalReservationCars--;
+	        			}
+	        				if (car.getIsPass() == true) {
+	        					totalParkPassCars--;
+	        				
+	        			}
 	        		}
         }
 
