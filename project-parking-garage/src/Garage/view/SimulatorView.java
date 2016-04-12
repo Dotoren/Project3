@@ -31,6 +31,9 @@ public class SimulatorView extends JFrame {
     private GridLayout northLayout;
     private JPanel southPanel;
     private JLabel Label1;
+    private JLabel lblLabel;
+    private JLabel Label2;
+    private JLabel Label3;
     
     
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
@@ -49,6 +52,7 @@ public class SimulatorView extends JFrame {
         contentPane.add(northPanel, BorderLayout.NORTH);
         contentPane.add(carParkView, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
+        
         
         pack();
         setVisible(true);
@@ -144,12 +148,21 @@ public class SimulatorView extends JFrame {
         
         Label1 = new JLabel();
         southPanel.add(Label1);
+        
+        Label2 = new JLabel();
+        southPanel.add(Label2);
+        
+        Label3 = new JLabel();
+        southPanel.add(Label3);
+        
     }
     
     
     public void updateView() {
         carParkView.updateView();
-        Label1.setText("Total number of cars:   " + simulator.getTotalNumberOfCars());
+        Label1.setText("Total amount of cars:   " + simulator.getTotalNumberOfCars());
+   //   Label2.setText("Amount of PassHolders:   " + simulator.);
+   //   Label3.setText("Amount of Reservations:   " + simulator.);
     }
     
     
