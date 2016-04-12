@@ -25,19 +25,23 @@ public class Simulator {
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
     private Thread draad;
+    
     private boolean isWeekend;
     private boolean isSunday;
     private boolean isWeekDay;
     private boolean isExtraLeaving;
+    
     public int enterSpeed;
     public int exitSpeed;
     public int paymentSpeed;
     public int averagetotalNumberOfCarsPerHour;
+    
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
+    
+    private int totalTicketCars;
     private int totalNumberOfCars;
-
     private int totalParkPassCars;
     private int totalReservationCars;
     
@@ -162,7 +166,7 @@ public class Simulator {
 
         Random random = new Random();
         
-        // methods for returning the value of cars in the simulation
+        
         
 
 
@@ -244,6 +248,7 @@ public class Simulator {
             }
             else {
             	car.setIsPaying(true);
+            	totalTicketCars++;
             }
             entranceCarQueue.addCar(car);
             break;
@@ -277,9 +282,11 @@ public class Simulator {
                     }
                 }
             }
-            totalNumberOfCars++;
+          // totalNumberOfCars++;
         }
-
+        
+        totalNumberOfCars = totalParkPassCars + totalReservationCars + totalTicketCars;
+        
         // Perform car park tick.
         simulatorView.tick();
 
@@ -291,17 +298,17 @@ public class Simulator {
         	}
 	        	if (car.getIsPaying()){
 	        		paymentCarQueue.addCar(car);
+	        		
 	        	}
 	        		else{
 	                    simulatorView.removeCarAt(car.getLocation());
-	                    totalNumberOfCars--;
+	                   // totalNumberOfCars--;
 	        			exitCarQueue.addCar(car);
 	        			if (car.getIsReserved() == true) {
 	        				totalReservationCars--;
 	        			}
-	        				if (car.getIsPass() == true) {
+	        			if (car.getIsPass() == true) {
 	        					totalParkPassCars--;
-	        				
 	        			}
 	        		}
         }
@@ -314,7 +321,7 @@ public class Simulator {
             }
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
-            totalNumberOfCars--;
+         //   totalNumberOfCars--;
             exitCarQueue.addCar(car);
         }
 
