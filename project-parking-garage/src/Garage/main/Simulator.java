@@ -31,9 +31,9 @@ public class Simulator {
     private boolean isWeekDay;
     private boolean isExtraLeaving;
     
-    public int enterSpeed;
-    public int exitSpeed;
-    public int paymentSpeed;
+    int enterSpeed = 6;
+    int exitSpeed = 9;
+    int paymentSpeed = 10;
     public int averagetotalNumberOfCarsPerHour;
     
     private int numberOfFloors;
@@ -175,60 +175,31 @@ public class Simulator {
         	setIsSunday(true);
         	setIsWeekend(false);
         	setIsWeekDay(false);
-        	setIsExtraLeaving(false);
         }
+        
         else if (day == 4-6 && hour == 19-24){
         	setIsSunday(false);
         	setIsWeekend(true);
         	setIsWeekDay(false);
-        	setIsExtraLeaving(false);
         }
-        else if (day == 5-7 && hour == 0-1){
-        	setIsSunday(false);
-        	setIsWeekend(false);
-        	setIsWeekDay(false);
-        	setIsExtraLeaving(true);
-        }
+        
         else {
         	setIsSunday(false);
         	setIsWeekend(false);
         	setIsWeekDay(true);
-        	setIsExtraLeaving(false);
         }
         
-        int enterSpeed1 = 2;
-        int enterSpeed2 = 3;
-        int enterSpeed3 = 5;
-        int exitSpeed1 = 10;
-        int exitSpeed2 = 15;
-        int paymentSpeed1 = 10;
         
         if (getIsSunday()){
         	averagetotalNumberOfCarsPerHour = 50;
-        	exitSpeed = exitSpeed1;
-        	enterSpeed = enterSpeed1;
-        	paymentSpeed = paymentSpeed1;
         }
         
         if (getIsWeekDay()){
-        	averagetotalNumberOfCarsPerHour = 75;
-        	exitSpeed = exitSpeed1;
-        	enterSpeed = enterSpeed2;
-        	paymentSpeed = paymentSpeed1;
+        	averagetotalNumberOfCarsPerHour = 75;;
         }
         
         if (getIsWeekend()){
         	averagetotalNumberOfCarsPerHour = 100;
-        	exitSpeed = exitSpeed1;
-        	enterSpeed = enterSpeed3;
-        	paymentSpeed = paymentSpeed1;
-        }
-        
-        if (getIsExtraLeaving()){
-        	averagetotalNumberOfCarsPerHour = 50;
-        	exitSpeed = exitSpeed2;
-        	enterSpeed = enterSpeed1;
-        	paymentSpeed = paymentSpeed1;
         }
 
         // Calculate the number of cars that arrive this minute.
@@ -248,7 +219,6 @@ public class Simulator {
             }
             else {
             	car.setIsPaying(true);
-            	totalTicketCars++;
             }
             entranceCarQueue.addCar(car);
             break;
@@ -268,7 +238,8 @@ public class Simulator {
                     simulatorView.setCarAt(freeReservedLocation, car);
                     int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
                     car.setMinutesLeft(stayMinutes);
-                    totalReservationCars++;
+                	totalReservationCars++;
+                	totalNumberOfCars++;
                 }
             }
             else {
@@ -277,15 +248,17 @@ public class Simulator {
                     simulatorView.setCarAt(freeLocation, car);
                     int stayMinutes = (int) (15 + random.nextFloat() * 10 * 60);
                     car.setMinutesLeft(stayMinutes);
-                    if (car.getIsPass() == true){
+                    if (car.getIsPass()){
                     	totalParkPassCars++;
+                    	totalNumberOfCars++;
+                    }
+                    else if (car.getIsPaying()){
+                    	totalNumberOfCars++;
                     }
                 }
             }
-          // totalNumberOfCars++;
         }
         
-        totalNumberOfCars = totalParkPassCars + totalReservationCars + totalTicketCars;
         
         // Perform car park tick.
         simulatorView.tick();
@@ -297,19 +270,19 @@ public class Simulator {
         		break;
         	}
 	        	if (car.getIsPaying()){
-	        		paymentCarQueue.addCar(car);
-	        		
+	        		paymentCarQueue.addCar(car);		
 	        	}
 	        		else{
 	                    simulatorView.removeCarAt(car.getLocation());
-	                   // totalNumberOfCars--;
+	                    if (car.getIsPass()){
+	                    	totalParkPassCars--;
+	                    	totalNumberOfCars--;
+	                    }
+	                    else if (car.getIsReserved()){
+	                    	totalReservationCars--;
+	                    	totalNumberOfCars--;
+	                    }
 	        			exitCarQueue.addCar(car);
-	        			if (car.getIsReserved() == true) {
-	        				totalReservationCars--;
-	        			}
-	        			if (car.getIsPass() == true) {
-	        					totalParkPassCars--;
-	        			}
 	        		}
         }
 
@@ -321,7 +294,7 @@ public class Simulator {
             }
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
-         //   totalNumberOfCars--;
+            totalNumberOfCars--;
             exitCarQueue.addCar(car);
         }
 
