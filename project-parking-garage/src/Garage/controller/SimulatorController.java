@@ -1,6 +1,6 @@
 package Garage.controller;
 
-import Garage.main.*;
+import Garage.model.*;
 
 public class SimulatorController {
 

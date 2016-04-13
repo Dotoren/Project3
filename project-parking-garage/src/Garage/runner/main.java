@@ -1,11 +1,10 @@
 package Garage.runner;
 
-import Garage.main.*;
 import Garage.logic.*;
+import Garage.model.*;
+
 import java.awt.*;
 import javax.swing.*;
-
-import Garage.main.Simulator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,4 +1,4 @@
-package Garage.main;
+package Garage.model;
 
 import Garage.logic.*;
 import Garage.view.*;
@@ -25,25 +25,25 @@ public class Simulator {
     private CarQueue exitCarQueue;
     private SimulatorView simulatorView;
     private Thread draad;
-    
     private boolean isWeekend;
     private boolean isSunday;
     private boolean isWeekDay;
     private boolean isExtraLeaving;
-    
     int enterSpeed = 6;
     int exitSpeed = 9;
     int paymentSpeed = 10;
     public int averagetotalNumberOfCarsPerHour;
-    
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
-    
-    private int totalTicketCars;
+    private int totalNormalCars;
     private int totalNumberOfCars;
     private int totalParkPassCars;
     private int totalReservationCars;
+    private int day = 0;
+    private int hour = 0;
+    private int minute = 0;
+    private int tickPause = 100;
     
     public boolean getIsWeekend() {
         return isWeekend;
@@ -79,6 +79,10 @@ public class Simulator {
     public int getTotalNumberOfCars() {
         return totalNumberOfCars;
     }
+    
+    public int getTotalNormalCars() {
+    	return totalNormalCars;
+    }
 
     public int getTotalParkPassCars() {
         return totalParkPassCars;
@@ -88,11 +92,6 @@ public class Simulator {
         return totalReservationCars;
     }
     
-    private int day = 0;
-    private int hour = 0;
-    private int minute = 0;
-
-    private int tickPause = 100;
 
     public Simulator() {
         entranceCarQueue = new CarQueue();
@@ -112,7 +111,6 @@ public class Simulator {
     }
 
     public void start() {
-    	
     	draad = new Thread() {
     		
     		public void run() {
@@ -126,7 +124,6 @@ public class Simulator {
     
     
     public void tickHundred() {
-    	
     	draad = new Thread() {
         		
     		public void run() {
@@ -138,15 +135,11 @@ public class Simulator {
     	draad.start();
     }
     
-    @SuppressWarnings("deprecation")
-	public void pause() {
-    	
+   	public void pause() {
     	draad.stop();
     }
 
 
-    
-    
     
     public void tick() {
         // Advance the time by one minute.
@@ -166,9 +159,6 @@ public class Simulator {
 
         Random random = new Random();
         
-        
-        
-
 
         // Get the average number of cars that arrive per hour.
         if (day == 7){
@@ -206,7 +196,7 @@ public class Simulator {
         double standardDeviation = averagetotalNumberOfCarsPerHour * 0.1;
         double totalNumberOfCarsPerHour = averagetotalNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
         int totalNumberOfCarsPerMinute = (int)Math.round(totalNumberOfCarsPerHour / 60);
-
+        
         // Add the cars to the back of the queue.
         for (int i = 0; i < totalNumberOfCarsPerMinute; i++) {
             Car car = new AdHocCar();
@@ -254,6 +244,7 @@ public class Simulator {
                     }
                     else if (car.getIsPaying()){
                     	totalNumberOfCars++;
+                    	totalNormalCars++;
                     }
                 }
             }
@@ -270,10 +261,12 @@ public class Simulator {
         		break;
         	}
 	        	if (car.getIsPaying()){
-	        		paymentCarQueue.addCar(car);		
+	        		paymentCarQueue.addCar(car);	
+	        		totalNormalCars--;
 	        	}
 	        		else{
 	                    simulatorView.removeCarAt(car.getLocation());
+	                    
 	                    if (car.getIsPass()){
 	                    	totalParkPassCars--;
 	                    	totalNumberOfCars--;
@@ -283,6 +276,7 @@ public class Simulator {
 	                    	totalNumberOfCars--;
 	                    }
 	        			exitCarQueue.addCar(car);
+	        			
 	        		}
         }
 

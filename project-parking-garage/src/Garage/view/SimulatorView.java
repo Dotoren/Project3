@@ -1,7 +1,8 @@
 package Garage.view;
 
 import Garage.logic.*;
-import Garage.main.*;
+import Garage.model.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,84 +15,83 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 import java.util.Random;
 
-public class SimulatorView extends JFrame {
+	public class SimulatorView extends JFrame {
     private CarParkView carParkView;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
     private Car[][][] cars;
     private Simulator simulator;
-    
+
     private JButton btnStart;
     private JButton btnStepOnce;
     private JButton btnStepHundred;
     private JButton btnPause;
     private JPanel northPanel;
     private Container contentPane;
-    private GridLayout northLayout;
     private JPanel southPanel;
     private JLabel Label1;
-    private JLabel lblLabel;
     private JLabel Label2;
     private JLabel Label3;
-    
-    
+    private JLabel Label4;
+
+
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
         this.numberOfFloors = numberOfFloors;
         this.numberOfRows = numberOfRows;
         this.numberOfPlaces = numberOfPlaces;
         this.simulator = simulator;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-        
+
         carParkView = new CarParkView();
-        
+
         contentPane = getContentPane();
         northView(); // Display the northView (buttons)
         southView(); // Display the southView (data)
-      
+
         contentPane.add(northPanel, BorderLayout.NORTH);
         contentPane.add(carParkView, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
-        
-        
+
+
         pack();
         setVisible(true);
 
         updateView();
     }
-    
+
     public class StartEvent implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
+
 			Thread queryThread = new Thread(); {
 				simulator.start();
             }
 		}
     }
-    
+
     public class StepOnceEvent implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
+
 			simulator.tick();
 		}
     }
-    
+
     public class StepHundredEvent implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
+
 			Thread queryThread = new Thread(); {
 				simulator.tickHundred();
 			}
 		}
     }
-    
+
     public class PauseEvent implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
-    		
+
     		simulator.pause();
     	}
     }
-    
+
     public void northView()
     {
     	northPanel = new JPanel();
@@ -103,88 +103,97 @@ public class SimulatorView extends JFrame {
     	JPanel panel2 = new JPanel();
     	JPanel panel3 = new JPanel();
     	JPanel panel4 = new JPanel();
-    	
+
     	StartEvent startEvent = new StartEvent();
     	StepOnceEvent stepOnceEvent = new StepOnceEvent();
     	StepHundredEvent stepHundredEvent = new StepHundredEvent();
     	PauseEvent pauseEvent = new PauseEvent();
-    	
+
     	btnStart = new JButton();
     	btnStart.setText("Start");
     	btnStart.setPreferredSize(new Dimension(125, 30));
     	btnStart.addActionListener(startEvent);
-    	
+
     	btnStepOnce = new JButton();
     	btnStepOnce.setText("Step once");
     	btnStepOnce.setPreferredSize(new Dimension(125, 30));
     	btnStepOnce.addActionListener(stepOnceEvent);
-    	
+
     	btnStepHundred = new JButton();
     	btnStepHundred.setText("Step hundred");
     	btnStepHundred.setPreferredSize(new Dimension(125, 30));
     	btnStepHundred.addActionListener(stepHundredEvent);
-    	
+
     	btnPause = new JButton();
     	btnPause.setText("Pause");
     	btnPause.setPreferredSize(new Dimension(125, 30));
     	btnPause.addActionListener(pauseEvent);
-    	
+
     	panel1.add(btnStart);
     	panel2.add(btnStepOnce);
     	panel3.add(btnStepHundred);
     	panel4.add(btnPause);
-    	
+
     	northPanel.add(panel1);
     	northPanel.add(panel2);
     	northPanel.add(panel3);
     	northPanel.add(panel4);
     }
-    
-    
-    public void southView() {    	
-    	
+
+
+    public void southView() {
+
         southPanel = new JPanel();
         getContentPane().add(southPanel);
         
+        Box box = Box.createVerticalBox();
+        southPanel.add(box);
+        
         Label1 = new JLabel();
-        southPanel.add(Label1);
-        
+        box.add(Label1);
+        Label4 = new JLabel();
+        box.add(Label4);
         Label2 = new JLabel();
-        southPanel.add(Label2);
-        
+        box.add(Label2);
         Label3 = new JLabel();
-        southPanel.add(Label3);
+        box.add(Label3);
         
+        
+
     }
-    
-    
+
+
     public void updateView() {
         carParkView.updateView();
-        Label1.setText("Total amount of cars:   " + simulator.getTotalNumberOfCars());
-        Label2.setText("Amount of PassHolders:   " + simulator.getTotalParkPassCars());
-        Label3.setText("Amount of Reservations:   " + simulator.getTotalReservationCars());
+        Label1.setText("Total amount of cars: " + simulator.getTotalNumberOfCars());
+        Label2.setText("Amount of PassHolders: " + simulator.getTotalParkPassCars());
+        Label3.setText("Amount of Reservations: " + simulator.getTotalReservationCars());
+        Label4.setText("Amount of normal customers: " + simulator.getTotalNormalCars());
     }
-    
-    
+
+
      public int getNumberOfFloors() {
             return numberOfFloors;
         }
-    
+
         public int getNumberOfRows() {
             return numberOfRows;
         }
-    
+
         public int getNumberOfPlaces() {
             return numberOfPlaces;
         }
-    
+
         public Car getCarAt(Location location) {
             if (!locationIsValid(location)) {
                 return null;
             }
             return cars[location.getFloor()][location.getRow()][location.getPlace()];
         }
-    
+
+
+        // --------------------------------------
+        // Should be in the controller / model
         public boolean setCarAt(Location location, Car car) {
             if (!locationIsValid(location)) {
                 return false;
@@ -197,7 +206,9 @@ public class SimulatorView extends JFrame {
             }
             return false;
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model
         public Car removeCarAt(Location location) {
             if (!locationIsValid(location)) {
                 return null;
@@ -210,7 +221,9 @@ public class SimulatorView extends JFrame {
             car.setLocation(null);
             return car;
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model
         public Location getRandomFreeLocation() {
         	Random randomGenerator = new Random();
         	int randomFloor = randomGenerator.nextInt(getNumberOfFloors());
@@ -228,7 +241,9 @@ public class SimulatorView extends JFrame {
             }
             return null;
         }
-        
+
+        // --------------------------------------
+        // Should be in the controller / model
         public Location getReservedFreeLocation() {
         	Random randomGenerator = new Random();
         	int randomFloor = randomGenerator.nextInt(getNumberOfFloors());
@@ -245,7 +260,9 @@ public class SimulatorView extends JFrame {
         	}
         	return null;
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model
         public Car getFirstLeavingCar() {
             for (int floor = 0; floor < getNumberOfFloors(); floor++) {
                 for (int row = 0; row < getNumberOfRows(); row++) {
@@ -260,7 +277,9 @@ public class SimulatorView extends JFrame {
             }
             return null;
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model
         public void tick() {
             for (int floor = 0; floor < getNumberOfFloors(); floor++) {
                 for (int row = 0; row < getNumberOfRows(); row++) {
@@ -274,7 +293,9 @@ public class SimulatorView extends JFrame {
                 }
             }
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model
         private boolean locationIsValid(Location location) {
             int floor = location.getFloor();
             int row = location.getRow();
@@ -284,13 +305,13 @@ public class SimulatorView extends JFrame {
             }
             return true;
         }
-    
+
     private class CarParkView extends JPanel {
-        
+
         private Dimension size;
-        private Image carParkImage; 
+        private Image carParkImage;
         private boolean isBlack;
-        
+
         public boolean getIsBlack() {
             return isBlack;
         }
@@ -298,21 +319,21 @@ public class SimulatorView extends JFrame {
         public void setIsBlack(boolean isBlack) {
             this.isBlack = isBlack;
         }
-    
+
         /**
          * Constructor for objects of class CarPark
          */
         public CarParkView() {
             size = new Dimension(0, 0);
         }
-    
+
         /**
          * Overridden. Tell the GUI manager how big we would like to be.
          */
         public Dimension getPreferredSize() {
             return new Dimension(800, 500);
         }
-    
+
         /**
          * Overriden. The car park view component needs to be redisplayed. Copy the
          * internal image to screen.
@@ -321,7 +342,7 @@ public class SimulatorView extends JFrame {
             if (carParkImage == null) {
                 return;
             }
-    
+
             Dimension currentSize = getSize();
             if (size.equals(currentSize)) {
                 g.drawImage(carParkImage, 0, 0, null);
@@ -331,7 +352,9 @@ public class SimulatorView extends JFrame {
                 g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
             }
         }
-    
+
+        // --------------------------------------
+        // Should be in the controller / model?
         public void updateView() {
             // Create a new car park image if the size has changed.
             if (!size.equals(getSize())) {
@@ -344,7 +367,7 @@ public class SimulatorView extends JFrame {
                     for(int place = 0; place < getNumberOfPlaces(); place++) {
                         Location location = new Location(floor, row, place);
                         Car car = getCarAt(location);
-                        
+
                         //Color color = car == null ? Color.white : car.getIsReserved() == true ? Color.orange : car.getIsPass() == true ? Color.green : Color.red;
 
                         if (row == getNumberOfRows()-1){
@@ -353,9 +376,9 @@ public class SimulatorView extends JFrame {
                         else{
                         	setIsBlack(false);
                         }
-                        	
+
                         Color color = getIsBlack() == true ? Color.black : Color.white;
-                        
+
                         if(car != null)
                         {
                             if(car.getIsPass())
@@ -371,14 +394,14 @@ public class SimulatorView extends JFrame {
                             	color = color.red;
                             }
                         }
-                        
+
                         drawPlace(graphics, location, color);
                     }
                 }
             }
             repaint();
         }
-    
+
         /**
          * Paint a place on this car park view in a given color.
          */
