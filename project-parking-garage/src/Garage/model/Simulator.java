@@ -17,7 +17,15 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
-
+/**
+*
+* @author		Sytske Anema (345010)
+* 				Remy Buitenkamp (340987)
+* 				Cordell Stirling (323643)
+* 				Nicole Mulder (350591)
+* @date			13-04-2016				
+* @version		1.0
+*/
 
 public class Simulator {
 
@@ -29,10 +37,6 @@ public class Simulator {
     private boolean isWeekend;
     private boolean isSunday;
     private boolean isWeekDay;
-    private boolean isExtraLeaving;
-    int enterSpeed = 6;
-    int exitSpeed = 9;
-    int paymentSpeed = 10;
     public int averagetotalNumberOfCarsPerHour;
     private int numberOfFloors;
     private int numberOfRows;
@@ -44,11 +48,14 @@ public class Simulator {
     private int entranceQueueNumber;
     private int paymentQueueNumber;
     private int exitQueueNumber;
-    private String dayType;
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
     private int tickPause = 100;
+    private int enterSpeed = 6;
+    private int exitSpeed = 9;
+    private int paymentSpeed = 10;
+    private String dayType;
     
     public boolean getIsWeekend() {
         return isWeekend;
@@ -128,9 +135,6 @@ public class Simulator {
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 6, 30, this);
         totalNumberOfCars = 0;
-        entranceQueueNumber = 0;
-        paymentQueueNumber = 0;
-        exitQueueNumber = 0;
     }
     
     public Simulator(int floors, int rows, int places) {
@@ -138,13 +142,11 @@ public class Simulator {
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         totalNumberOfCars = 0;
-        entranceQueueNumber = 0;
-        paymentQueueNumber = 0;
-        exitQueueNumber = 0;
         simulatorView = new SimulatorView(floors, rows, places, this);
 
     }
 
+    // method for the start button that starts the simulation for 999 minutes.
     public void start() {
     	draad = new Thread() {
     		
@@ -157,7 +159,7 @@ public class Simulator {
     	draad.start();
     }
     
-    
+    // method for the tickhundred button that starts the simulation for 100 minutes.
     public void tickHundred() {
     	draad = new Thread() {
         		
@@ -170,6 +172,7 @@ public class Simulator {
     	draad.start();
     }
     
+    // method for the pause button that pauses the simulation.
    	public void pause() {
     	draad.stop();
     }
@@ -194,6 +197,7 @@ public class Simulator {
 
         Random random = new Random();
         
+        // creates several arrays used in the system to check for day types.
         int[] nums1 = {4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
         int[] nums2 = {19,20,21,22,23};
         int[] nums3 = {0,1,2,3};
@@ -208,36 +212,41 @@ public class Simulator {
         	setIsWeekDay(false);
         }
         
-        else if (Arrays.binarySearch(nums4,  day) >= 0 && Arrays.binarySearch(nums2,  hour) >= 0){
+        //sets the system to a weekend (high occupation) for thrusday, friday and saturday 19:00-03:00 the next day..
+        if (Arrays.binarySearch(nums4,  day) >= 0 && Arrays.binarySearch(nums2,  hour) >= 0 || Arrays.binarySearch(nums5,  day) >= 0 && Arrays.binarySearch(nums3,  hour) >= 0){
         	setIsSunday(false);
         	setIsWeekend(true);
         	setIsWeekDay(false);
         }
         
-        else if (Arrays.binarySearch(nums5,  day) >= 0 && Arrays.binarySearch(nums3,  hour) >= 0){
-        	setIsSunday(false);
-        	setIsWeekend(true);
+        // Get the average number of cars that arrive per hour.
+        else if (day == 6 && Arrays.binarySearch(nums1,  hour) >= 0){
+        	setIsSunday(true);
+        	setIsWeekend(false);
         	setIsWeekDay(false);
         }
         
+        // sets the system to a weekday (normal occupation) when all other day types have been set.
         else {
         	setIsSunday(false);
         	setIsWeekend(false);
         	setIsWeekDay(true);
         }
         
-        
+        // Sets the amount of cars that arrive per hour depending on low/now/high occupation days.
         if (getIsSunday()){
-        	averagetotalNumberOfCarsPerHour = 25;
+        	averagetotalNumberOfCarsPerHour = 125;
         }
         
-        if (getIsWeekDay()){
-        	averagetotalNumberOfCarsPerHour = 100;
-        }
-        
-        if (getIsWeekend()){
+        else if (getIsWeekDay()){
         	averagetotalNumberOfCarsPerHour = 250;
         }
+        
+        else if (getIsWeekend()){
+        	averagetotalNumberOfCarsPerHour = 500;
+        }
+        
+        // Sets numbers 0-6 to a day of the week for easy reading in the simulation screen.
         if (day == 0){
         	dayType = "Monday";
         }
@@ -274,11 +283,12 @@ public class Simulator {
             }
             if (car.getIsReserved() || car.getIsPass()){
             	car.setIsPaying(false);
+            	entranceQueueNumber++;
             }
             else {
             	car.setIsPaying(true);
+            	entranceQueueNumber++;
             }
-            entranceQueueNumber++;
             entranceCarQueue.addCar(car);
         }
                 
@@ -288,9 +298,11 @@ public class Simulator {
             if (car == null) {
                 break;
             }
-        	entranceQueueNumber--; 
+            else {
+            	entranceQueueNumber--; 
+            }
             
-            // Find a space for this car.
+            // Finds a random reserved location for a car with a reservation.
             if (car.getIsReserved() == true){
             	Location freeReservedLocation = simulatorView.getReservedFreeLocation();
                 if (freeReservedLocation != null) {
@@ -301,6 +313,7 @@ public class Simulator {
                 	totalNumberOfCars++;
                 }
             }
+            // Finds a random non reserved location for a car without a reservation.
             else {
             	Location freeLocation = simulatorView.getRandomFreeLocation();
                 if (freeLocation != null) {
@@ -343,11 +356,10 @@ public class Simulator {
 	                    else if (car.getIsReserved()){
 	                    	totalReservationCars--;
 	                    }
-                    	totalNumberOfCars--;
-                    	exitQueueNumber++;
-	        			exitCarQueue.addCar(car);
-	        			
 	        		}
+            	exitQueueNumber++;
+            	totalNumberOfCars--;
+    			exitCarQueue.addCar(car);
         }
 
         // Let cars pay.
@@ -356,13 +368,13 @@ public class Simulator {
             if (car == null) {
                 break;
             }
-            paymentQueueNumber--;
-            exitQueueNumber++;
             
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
             totalNumberOfCars--;
             totalNormalCars--;
+        	paymentQueueNumber--;
+        	exitQueueNumber++;
             exitCarQueue.addCar(car);
         }
 

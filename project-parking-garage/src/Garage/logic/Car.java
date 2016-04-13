@@ -2,6 +2,16 @@ package Garage.logic;
 
 import Garage.logic.Location;
 
+/**
+*
+* @author		Sytske Anema (345010)
+* 				Remy Buitenkamp (340987)
+* 				Cordell Stirling (323643)
+* 				Nicole Mulder (350591)
+* @date			13-04-2016				
+* @version		1.0
+*/
+
 public abstract class Car {
 
     private Location location;
@@ -17,18 +27,22 @@ public abstract class Car {
 
     }
 
+    // returns the location
     public Location getLocation() {
         return location;
     }
-
+    
+    // method to set the location
     public void setLocation(Location location) {
         this.location = location;
     }
 
+    // returns the amount of minutes that are left
     public int getMinutesLeft() {
         return minutesLeft;
     }
 
+    // method that sets the amount of minutes that are left
     public void setMinutesLeft(int minutesLeft) {
         this.minutesLeft = minutesLeft;
     }

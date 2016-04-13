@@ -7,13 +7,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 import java.util.Random;
+import java.io.*;
+import java.lang.*;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+/**
+*
+* @author		Sytske Anema (345010)
+* 				Remy Buitenkamp (340987)
+* 				Cordell Stirling (323643)
+* 				Nicole Mulder (350591)
+* @date			13-04-2016				
+* @version		1.0
+*/
 
 	public class SimulatorView extends JFrame {
     private CarParkView carParkView;
@@ -22,7 +39,6 @@ import java.util.Random;
     private int numberOfPlaces;
     private Car[][][] cars;
     private Simulator simulator;
-
     private JButton btnStart;
     private JButton btnStepOnce;
     private JButton btnStepHundred;
@@ -33,7 +49,9 @@ import java.util.Random;
     private JPanel northPanel;
     private Container contentPane;
     private JPanel southPanel;
+    private ImageIcon image1;
     private JLabel ImageLabel;
+    private JPanel ImagePanel;
     private JLabel Label1;
     private JLabel Label2;
     private JLabel Label3;
@@ -43,8 +61,7 @@ import java.util.Random;
     private JLabel Label7;
     private JLabel Label8;
     private JLabel Label9;
-    private JPanel panel;
-
+    
 
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
         this.numberOfFloors = numberOfFloors;
@@ -54,22 +71,29 @@ import java.util.Random;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
 
         carParkView = new CarParkView();
-
         contentPane = getContentPane();
+        
         northView(); // Display the northView (buttons)
         southView(); // Display the southView (data)
 
+        // add contentPanes to panels in different Borderlayout directions.
         contentPane.add(northPanel, BorderLayout.NORTH);
         contentPane.add(carParkView, BorderLayout.CENTER);
         contentPane.add(southPanel, BorderLayout.SOUTH);
 
 
         pack();
+        
+        // sets the simulatorView to visible
         setVisible(true);
 
+        // updates the data that is visible in the simulatorView
         updateView();
     }
 
+    
+    // Here you determine the action of a button after it is pressed, we used ActionListeners for this.
+    
     public class StartEvent implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
@@ -124,6 +148,8 @@ import java.util.Random;
     }
 
 
+    // This method determines how the northView looks like, it contains panels and buttons.
+    
     public void northView()
     {
     	northPanel = new JPanel();
@@ -199,19 +225,23 @@ import java.util.Random;
     	northPanel.add(panel4);
     }
 
-
+    // This method determines how the southView looks like, it contains panels, images and data of the parking garage.
     public void southView() {
 
         southPanel = new JPanel();
         getContentPane().add(southPanel);
         
-    	ImageLabel = new JLabel("");
-    	ImageLabel.setIcon(new ImageIcon("C:\\Users\\Remy\\git\\Project3\\project-parking-garage\\Images\\Legenda.png"));
-    	southPanel.add(ImageLabel);
+    	//ImageLabel = new JLabel("");
+    	//ImageLabel.setIcon(new ImageIcon("C:\\Users\\Remy\\git\\Project3\\project-parking-garage\\Images\\Legenda.png"));
+    	//southPanel.add(ImageLabel);
+        
+        image1 = new ImageIcon(getClass().getResource("Legenda.png"));
+        ImageLabel = new JLabel(image1);
+        southPanel.add(ImageLabel);
          
-        panel = new JPanel();
-        panel.setPreferredSize(new Dimension(100,100));
-        southPanel.add(panel);
+        ImagePanel = new JPanel();
+        ImagePanel.setPreferredSize(new Dimension(100,100));
+        southPanel.add(ImagePanel);
         
         Box box = Box.createVerticalBox();
         southPanel.add(box);
@@ -238,7 +268,8 @@ import java.util.Random;
 
     }
 
-
+    // The updateView method is used to update the data displayed in the simulator.
+    
     public void updateView() {
         carParkView.updateView();
         Label1.setText("Total amount of cars: " + simulator.getTotalNumberOfCars());
@@ -252,19 +283,21 @@ import java.util.Random;
         Label9.setText("Time: " + simulator.getHour() + ":" + simulator.getMinute());
     }
 
-
-     public int getNumberOfFloors() {
+    	// method to return the amount of floors of the garage
+    	public int getNumberOfFloors() {
             return numberOfFloors;
         }
-
+     	
+    	// method to return the amount of rows of the garage
         public int getNumberOfRows() {
             return numberOfRows;
         }
 
+        // method to return the amount of places of the garage
         public int getNumberOfPlaces() {
             return numberOfPlaces;
         }
-
+        
         public Car getCarAt(Location location) {
             if (!locationIsValid(location)) {
                 return null;
