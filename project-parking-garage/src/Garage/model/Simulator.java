@@ -13,6 +13,7 @@ import Garage.view.SimulatorView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
@@ -40,6 +41,10 @@ public class Simulator {
     private int totalNumberOfCars;
     private int totalParkPassCars;
     private int totalReservationCars;
+    private int entranceQueueNumber;
+    private int paymentQueueNumber;
+    private int exitQueueNumber;
+    private String dayType;
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
@@ -68,14 +73,6 @@ public class Simulator {
         this.isWeekDay = isWeekDay;
     }
     
-    public boolean getIsExtraLeaving() {
-        return isExtraLeaving;
-    }
-
-    public void setIsExtraLeaving(boolean isExtraLeaving) {
-        this.isExtraLeaving = isExtraLeaving;
-    }
-    
     public int getTotalNumberOfCars() {
         return totalNumberOfCars;
     }
@@ -92,6 +89,38 @@ public class Simulator {
         return totalReservationCars;
     }
     
+    public int getEntranceQueueNumber() {
+    	return entranceQueueNumber;
+    }
+    
+    public int getPaymentQueueNumber() {
+    	return paymentQueueNumber;
+    }
+    
+    public int getExitQueueNumber() {
+    	return exitQueueNumber;
+    }
+    
+    public String getDayType() {
+    	return dayType;
+    }
+    
+    public int getHour() {
+    	return hour;
+    }
+    
+    public int getMinute(){
+    	return minute;
+    }
+    
+    public void setDay(int day){
+    	this.day = day;
+    }
+    
+    public void setHour(int hour){
+    	this.hour = hour;
+    }
+    
 
     public Simulator() {
         entranceCarQueue = new CarQueue();
@@ -99,6 +128,9 @@ public class Simulator {
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 6, 30, this);
         totalNumberOfCars = 0;
+        entranceQueueNumber = 0;
+        paymentQueueNumber = 0;
+        exitQueueNumber = 0;
     }
     
     public Simulator(int floors, int rows, int places) {
@@ -106,6 +138,9 @@ public class Simulator {
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         totalNumberOfCars = 0;
+        entranceQueueNumber = 0;
+        paymentQueueNumber = 0;
+        exitQueueNumber = 0;
         simulatorView = new SimulatorView(floors, rows, places, this);
 
     }
@@ -159,15 +194,27 @@ public class Simulator {
 
         Random random = new Random();
         
+        int[] nums1 = {4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
+        int[] nums2 = {19,20,21,22,23};
+        int[] nums3 = {0,1,2,3};
+        int[] nums4 = {4,5,6};
+        int[] nums5 = {5,6,7};
+        
 
         // Get the average number of cars that arrive per hour.
-        if (day == 7){
+        if (day == 7 && Arrays.binarySearch(nums1,  hour) >= 0){
         	setIsSunday(true);
         	setIsWeekend(false);
         	setIsWeekDay(false);
         }
         
-        else if (day == 4-6 && hour == 19-24){
+        else if (Arrays.binarySearch(nums4,  day) >= 0 && Arrays.binarySearch(nums2,  hour) >= 0){
+        	setIsSunday(false);
+        	setIsWeekend(true);
+        	setIsWeekDay(false);
+        }
+        
+        else if (Arrays.binarySearch(nums5,  day) >= 0 && Arrays.binarySearch(nums3,  hour) >= 0){
         	setIsSunday(false);
         	setIsWeekend(true);
         	setIsWeekDay(false);
@@ -181,15 +228,36 @@ public class Simulator {
         
         
         if (getIsSunday()){
-        	averagetotalNumberOfCarsPerHour = 50;
+        	averagetotalNumberOfCarsPerHour = 25;
         }
         
         if (getIsWeekDay()){
-        	averagetotalNumberOfCarsPerHour = 75;;
+        	averagetotalNumberOfCarsPerHour = 100;
         }
         
         if (getIsWeekend()){
-        	averagetotalNumberOfCarsPerHour = 100;
+        	averagetotalNumberOfCarsPerHour = 250;
+        }
+        if (day == 0){
+        	dayType = "Monday";
+        }
+        else if (day == 1){
+        	dayType = "Tuesday";
+        }
+        else if (day == 2){
+        	dayType = "Wednesday";
+        }
+        else if (day == 3){
+        	dayType = "Thursday";
+        }
+        else if (day == 4){
+        	dayType = "Friday";
+        }
+        else if (day == 5){
+        	dayType = "Saturday";
+        }
+        else if (day == 6){
+        	dayType = "Sunday";
         }
 
         // Calculate the number of cars that arrive this minute.
@@ -210,8 +278,8 @@ public class Simulator {
             else {
             	car.setIsPaying(true);
             }
+            entranceQueueNumber++;
             entranceCarQueue.addCar(car);
-            break;
         }
                 
         // Remove car from the front of the queue and assign to a parking space.
@@ -220,6 +288,7 @@ public class Simulator {
             if (car == null) {
                 break;
             }
+        	entranceQueueNumber--; 
             
             // Find a space for this car.
             if (car.getIsReserved() == true){
@@ -261,7 +330,8 @@ public class Simulator {
         		break;
         	}
 	        	if (car.getIsPaying()){
-	        		paymentCarQueue.addCar(car);	
+	        		paymentQueueNumber++;
+	        		paymentCarQueue.addCar(car);
 	        		
 	        	}
 	        		else{
@@ -269,12 +339,12 @@ public class Simulator {
 	                    
 	                    if (car.getIsPass()){
 	                    	totalParkPassCars--;
-	                    	totalNumberOfCars--;
 	                    }
 	                    else if (car.getIsReserved()){
 	                    	totalReservationCars--;
-	                    	totalNumberOfCars--;
 	                    }
+                    	totalNumberOfCars--;
+                    	exitQueueNumber++;
 	        			exitCarQueue.addCar(car);
 	        			
 	        		}
@@ -286,6 +356,9 @@ public class Simulator {
             if (car == null) {
                 break;
             }
+            paymentQueueNumber--;
+            exitQueueNumber++;
+            
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
             totalNumberOfCars--;
@@ -299,6 +372,7 @@ public class Simulator {
             if (car == null) {
                 break;
             }
+            exitQueueNumber--;
             // Bye!
         }
 

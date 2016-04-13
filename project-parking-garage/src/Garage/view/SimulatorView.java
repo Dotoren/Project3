@@ -27,14 +27,23 @@ import java.util.Random;
     private JButton btnStepOnce;
     private JButton btnStepHundred;
     private JButton btnPause;
+    private JButton btnWeekDay;
+    private JButton btnWeekend;
+    private JButton btnSunday;
     private JPanel northPanel;
     private Container contentPane;
     private JPanel southPanel;
+    private JLabel ImageLabel;
     private JLabel Label1;
     private JLabel Label2;
     private JLabel Label3;
     private JLabel Label4;
     private JLabel Label5;
+    private JLabel Label6;
+    private JLabel Label7;
+    private JLabel Label8;
+    private JLabel Label9;
+    private JPanel panel;
 
 
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
@@ -92,6 +101,28 @@ import java.util.Random;
     		simulator.pause();
     	}
     }
+    
+    public class WeekDayEvent implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		simulator.setDay(0);
+    		simulator.setHour(8);
+    	}
+    }
+    
+    public class WeekendEvent implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		simulator.setDay(4);
+    		simulator.setHour(19);
+    	}
+    }
+
+    public class SundayEvent implements ActionListener {
+    	public void actionPerformed(ActionEvent e){
+    		simulator.setDay(6);
+    		simulator.setHour(4);
+    	}
+    }
+
 
     public void northView()
     {
@@ -100,6 +131,9 @@ import java.util.Random;
 
     	getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
+    	JPanel panel5 = new JPanel();
+    	JPanel panel6 = new JPanel();
+    	JPanel panel7 = new JPanel();
     	JPanel panel1 = new JPanel();
     	JPanel panel2 = new JPanel();
     	JPanel panel3 = new JPanel();
@@ -109,7 +143,25 @@ import java.util.Random;
     	StepOnceEvent stepOnceEvent = new StepOnceEvent();
     	StepHundredEvent stepHundredEvent = new StepHundredEvent();
     	PauseEvent pauseEvent = new PauseEvent();
+    	WeekDayEvent weekDayEvent = new WeekDayEvent();
+    	WeekendEvent weekendEvent = new WeekendEvent();
+    	SundayEvent sundayEvent = new SundayEvent();
 
+    	btnWeekDay = new JButton();
+    	btnWeekDay.setText("WeekDay");
+    	btnWeekDay.setPreferredSize(new Dimension (125,30));
+    	btnWeekDay.addActionListener(weekDayEvent);
+    	
+    	btnWeekend = new JButton();
+    	btnWeekend.setText("Weekend");
+    	btnWeekend.setPreferredSize(new Dimension (125,30));
+    	btnWeekend.addActionListener(weekendEvent);
+    	
+    	btnSunday = new JButton();
+    	btnSunday.setText("Sunday");
+    	btnSunday.setPreferredSize(new Dimension (125,30));
+    	btnSunday.addActionListener(sundayEvent);
+    	
     	btnStart = new JButton();
     	btnStart.setText("Start");
     	btnStart.setPreferredSize(new Dimension(125, 30));
@@ -131,11 +183,17 @@ import java.util.Random;
     	btnPause.addActionListener(pauseEvent);
 
     	panel1.add(btnStart);
+    	panel5.add(btnWeekDay);
+    	panel6.add(btnWeekend);
+    	panel7.add(btnSunday);
     	panel2.add(btnStepOnce);
     	panel3.add(btnStepHundred);
     	panel4.add(btnPause);
 
     	northPanel.add(panel1);
+    	northPanel.add(panel5);
+    	northPanel.add(panel6);
+    	northPanel.add(panel7);
     	northPanel.add(panel2);
     	northPanel.add(panel3);
     	northPanel.add(panel4);
@@ -147,9 +205,21 @@ import java.util.Random;
         southPanel = new JPanel();
         getContentPane().add(southPanel);
         
+    	ImageLabel = new JLabel("");
+    	ImageLabel.setIcon(new ImageIcon("C:\\Users\\Remy\\git\\Project3\\project-parking-garage\\Images\\Legenda.png"));
+    	southPanel.add(ImageLabel);
+         
+        panel = new JPanel();
+        panel.setPreferredSize(new Dimension(100,100));
+        southPanel.add(panel);
+        
         Box box = Box.createVerticalBox();
         southPanel.add(box);
-        
+                
+        Label8 = new JLabel();
+        box.add(Label8);
+        Label9 = new JLabel();
+        box.add(Label9);
         Label1 = new JLabel();
         box.add(Label1);
         Label4 = new JLabel();
@@ -160,7 +230,10 @@ import java.util.Random;
         box.add(Label3);
         Label5 = new JLabel();
         box.add(Label5);
-        
+        Label6 = new JLabel();
+        box.add(Label6);
+        Label7 = new JLabel();
+        box.add(Label7);
         
 
     }
@@ -172,7 +245,11 @@ import java.util.Random;
         Label2.setText("Amount of PassHolders: " + simulator.getTotalParkPassCars());
         Label3.setText("Amount of Reservations: " + simulator.getTotalReservationCars());
         Label4.setText("Amount of normal customers: " + simulator.getTotalNormalCars());
-       // Label5.setText("Amount of cars in queue: " + simulator.getTotalQueueCars());
+        Label5.setText("Amount of cars in entrance queue: " + simulator.getEntranceQueueNumber());
+        Label6.setText("Amount of cars in payment queue: " + simulator.getPaymentQueueNumber());
+        Label7.setText("Amount of cars in exit queue: " + simulator.getExitQueueNumber());
+        Label8.setText("Day: " + simulator.getDayType());
+        Label9.setText("Time: " + simulator.getHour() + ":" + simulator.getMinute());
     }
 
 
