@@ -262,7 +262,7 @@ public class Simulator {
         	}
 	        	if (car.getIsPaying()){
 	        		paymentCarQueue.addCar(car);	
-	        		totalNormalCars--;
+	        		
 	        	}
 	        		else{
 	                    simulatorView.removeCarAt(car.getLocation());
@@ -289,6 +289,7 @@ public class Simulator {
             // TODO Handle payment.
             simulatorView.removeCarAt(car.getLocation());
             totalNumberOfCars--;
+            totalNormalCars--;
             exitCarQueue.addCar(car);
         }
 
