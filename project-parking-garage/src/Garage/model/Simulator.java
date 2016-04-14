@@ -29,9 +29,6 @@ public class Simulator {
     private boolean isSunday;
     private boolean isWeekDay;
     public int averagetotalNumberOfCarsPerHour;
-    private int numberOfFloors;
-    private int numberOfRows;
-    private int numberOfPlaces;
     private int totalNormalCars;
     private int totalNumberOfCars;
     private int totalParkPassCars;
