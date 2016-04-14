@@ -1,20 +1,11 @@
 package Garage.model;
 
-import Garage.logic.*;
-import Garage.view.*;
-
-import javax.swing.*;
-
 import Garage.logic.AdHocCar;
 import Garage.logic.Car;
 import Garage.logic.CarQueue;
 import Garage.logic.Location;
 import Garage.view.SimulatorView;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
 
 /**

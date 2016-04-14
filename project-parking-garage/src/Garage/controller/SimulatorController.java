@@ -10,7 +10,6 @@ package Garage.controller;
 * @version		1.0
 */
 
-import Garage.model.*;
 
 public class SimulatorController {
 
