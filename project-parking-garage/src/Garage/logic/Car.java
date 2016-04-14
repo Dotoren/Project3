@@ -32,41 +32,47 @@ public abstract class Car {
         return location;
     }
     
-    // method to set the location
+    // method to set the location of the car
     public void setLocation(Location location) {
         this.location = location;
     }
 
-    // returns the amount of minutes that are left
+    // returns the amount of minutes that are left before the car leaves
     public int getMinutesLeft() {
         return minutesLeft;
     }
 
-    // method that sets the amount of minutes that are left
+    // method that sets the amount of minutes before the car leaves
     public void setMinutesLeft(int minutesLeft) {
         this.minutesLeft = minutesLeft;
     }
     
+    // method that returns ticket customers
     public boolean getIsPaying() {
         return isPaying;
     }
 
+    // method to determine whether a car (customer) is a paid car (normal customer)
     public void setIsPaying(boolean isPaying) {
         this.isPaying = isPaying;
     }
     
+    // returns customers that have a pass
     public boolean getIsPass() {
         return isPass;
     }
 
+    // set a car to passholder
     public void setIsPass(boolean isPass) {
         this.isPass = isPass;
     }
     
+    // returns reserved cars
     public boolean getIsReserved() {
         return isReserved;
     }
 
+    // sets a car to reserved 
     public void setIsReserved(boolean isReserved) {
         this.isReserved = isReserved;
     }

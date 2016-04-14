@@ -57,6 +57,8 @@ public class Simulator {
     private int paymentSpeed = 10;
     private String dayType;
     
+    // getters and setters for the data in the simulator
+    
     public boolean getIsWeekend() {
         return isWeekend;
     }
